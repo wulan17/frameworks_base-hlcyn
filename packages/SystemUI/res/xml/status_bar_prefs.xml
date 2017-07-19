@@ -124,6 +124,11 @@
         android:defaultValue="false" />
 
     <com.android.systemui.tuner.StatusBarSwitch
+        android:icon="@drawable/ic_statusbar_volte"
+        android:key="ims"
+        android:title="@string/status_bar_ims" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
         android:icon="@*android:drawable/ic_battery"
         android:key="battery"
         android:title="@string/battery" />
