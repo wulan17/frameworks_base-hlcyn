@@ -29,6 +29,7 @@ import com.android.systemui.CoreStartable;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.res.R;
 import com.android.systemui.statusbar.connectivity.IconState;
+import com.android.systemui.statusbar.connectivity.ImsIconState;
 import com.android.systemui.statusbar.connectivity.NetworkController;
 import com.android.systemui.statusbar.connectivity.SignalCallback;
 import com.android.systemui.statusbar.phone.ui.StatusBarIconController;
@@ -62,6 +63,7 @@ public class StatusBarSignalPolicy
     private final String mSlotNoCalling;
     private final String mSlotCallStrength;
     private final String mSlotRoaming = "roaming";
+    private final String mSlotIms;
 
     private final Context mContext;
     private final StatusBarIconController mIconController;
@@ -79,6 +81,7 @@ public class StatusBarSignalPolicy
     private final boolean mActivityEnabled;
     private boolean mHideVpn;
     private boolean mHideRoaming;
+    private boolean mHideIms;
 
     private final ArrayList<CallIndicatorIconState> mCallIndicatorStates = new ArrayList<>();
     private boolean mInitialized;
@@ -112,6 +115,7 @@ public class StatusBarSignalPolicy
         mSlotCallStrength =
                 mContext.getString(com.android.internal.R.string.status_bar_call_strength);
         mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+        mSlotIms = mContext.getString(com.android.internal.R.string.status_bar_ims);
     }
 
     @Override
@@ -193,15 +197,17 @@ public class StatusBarSignalPolicy
         boolean hideEthernet = hideList.contains(mSlotEthernet);
         boolean hideVpn = hideList.contains(mSlotVpn);
         boolean hideRoaming = hideList.contains(mSlotRoaming);
+        boolean hideIms = hideList.contains(mSlotIms);
 
         if (hideAirplane != mHideAirplane || hideMobile != mHideMobile
                 || hideEthernet != mHideEthernet || hideVpn != mHideVpn
-                || hideRoaming != mHideRoaming) {
+                || hideRoaming != mHideRoaming || hideIms != mHideIms) {
             mHideAirplane = hideAirplane;
             mHideMobile = hideMobile;
             mHideEthernet = hideEthernet;
             mHideVpn = hideVpn;
             mHideRoaming = hideRoaming;
+            mHideIms = hideIms;
             // Re-register to get new callbacks.
             mNetworkController.removeCallback(this);
             mNetworkController.addCallback(this);
@@ -293,6 +299,16 @@ public class StatusBarSignalPolicy
                     mSlotAirplane,
                     TelephonyIcons.FLIGHT_MODE_ICON,
                     mContext.getString(R.string.accessibility_airplane_mode));
+        }
+    }
+
+    @Override
+    public void setImsIcon(ImsIconState icon) {
+        if (icon.visible && !mHideIms) {
+            mIconController.setImsIcon(mSlotIms, icon);
+            mIconController.setIconVisibility(mSlotIms, true);
+        } else {
+            mIconController.setIconVisibility(mSlotIms, false);
         }
     }
 

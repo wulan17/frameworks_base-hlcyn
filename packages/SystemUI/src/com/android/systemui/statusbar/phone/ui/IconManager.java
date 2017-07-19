@@ -18,6 +18,7 @@ package com.android.systemui.statusbar.phone.ui;
 
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_BINDABLE;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_ICON;
+import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_IMS;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_MOBILE_NEW;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_NETWORK_TRAFFIC;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_WIFI_NEW;
@@ -34,7 +35,9 @@ import com.android.systemui.demomode.DemoModeCommandReceiver;
 import com.android.systemui.modes.shared.ModesUiIcons;
 import com.android.systemui.statusbar.BaseStatusBarFrameLayout;
 import com.android.systemui.statusbar.StatusBarIconView;
+import com.android.systemui.statusbar.StatusBarImsView;
 import com.android.systemui.statusbar.StatusIconDisplayable;
+import com.android.systemui.statusbar.connectivity.ImsIconState;
 import com.android.systemui.statusbar.connectivity.ui.MobileContextProvider;
 import com.android.systemui.statusbar.phone.DemoStatusIcons;
 import com.android.systemui.statusbar.phone.StatusBarIconHolder;
@@ -154,6 +157,7 @@ public class IconManager implements DemoModeCommandReceiver {
             case TYPE_BINDABLE ->
                 // Safe cast, since only BindableIconHolders can set this tag on themselves
                 addBindableIcon((BindableIconHolder) holder, index);
+            case TYPE_IMS -> addImsIcon(index, slot, holder.getImsState());
             default -> null;
         };
     }
@@ -221,6 +225,13 @@ public class IconManager implements DemoModeCommandReceiver {
         return view;
     }
 
+    protected StatusBarImsView addImsIcon(int index, String slot, ImsIconState state) {
+        StatusBarImsView view = onCreateStatusBarImsView(slot);
+        view.applyImsState(state);
+        mGroup.addView(view, index, onCreateLayoutParams());
+        return view;
+    }
+
     private StatusBarIconView onCreateStatusBarIconView(String slot, boolean blocked) {
         return new StatusBarIconView(mContext, slot, null, blocked);
     }
@@ -239,6 +250,11 @@ public class IconManager implements DemoModeCommandReceiver {
                         slot,
                         mMobileIconsViewModel.viewModelForSub(subId, mLocation)
                 );
+    }
+
+    private StatusBarImsView onCreateStatusBarImsView(String slot) {
+        StatusBarImsView view = StatusBarImsView.fromContext(mContext, slot);
+        return view;
     }
 
     protected LinearLayout.LayoutParams onCreateLayoutParams(Shape shape) {
@@ -301,6 +317,13 @@ public class IconManager implements DemoModeCommandReceiver {
                 return;
             default:
                 break;
+        }
+    }
+
+    public void onSetImsIcon(int viewIndex, ImsIconState state) {
+        StatusBarImsView view = (StatusBarImsView) mGroup.getChildAt(viewIndex);
+        if (view != null) {
+            view.applyImsState(state);
         }
     }
 
