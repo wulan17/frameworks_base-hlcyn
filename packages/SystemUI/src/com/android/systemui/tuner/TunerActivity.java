@@ -48,10 +48,12 @@ public class TunerActivity extends CollapsingToolbarBaseActivity implements
         PreferenceFragment.OnPreferenceStartScreenCallback {
 
     private static final String TAG_TUNER = "tuner";
+    private static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
     private final DemoModeController mDemoModeController;
     private final TunerService mTunerService;
     private final GlobalSettings mGlobalSettings;
+    private SystemSettingListPreference mStatusBarAmPm;
 
     @Inject
     TunerActivity(
@@ -74,6 +76,14 @@ public class TunerActivity extends CollapsingToolbarBaseActivity implements
 
         DynamicColors.applyToActivityIfAvailable(this);
         setTheme(com.android.settingslib.widget.theme.R.style.Theme_SubSettingsBase);
+
+        mStatusBarAmPm =
+                (SystemSettingListPreference) findPreference(STATUS_BAR_AM_PM);
+
+        if (DateFormat.is24HourFormat(getActivity())) {
+            mStatusBarAmPm.setEnabled(false);
+            mStatusBarAmPm.setSummary(R.string.status_bar_am_pm_info);
+        }
 
         // Handle window insets for padding adjustments
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_frame), (view, insets) -> {
