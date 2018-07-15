@@ -6651,6 +6651,17 @@ public final class Settings {
         public static final String ENABLE_TASKBAR = "enable_taskbar";
 
         /**
+         * Display style of AM/PM next to clock in status bar
+         * 0: No display (Gingerbread/ICS stock)
+         * 1: Small display (Froyo stock)
+         * 2: Normal display (Eclair stock)
+         * default: 0
+         * 
+         * @hide
+         */
+        public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
+
+        /**
          * Force full screen for devices with cutout
          * @hide
          */
