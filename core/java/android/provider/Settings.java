@@ -6639,6 +6639,17 @@ public final class Settings {
                 "display_picture_adjustment";
 
         /**
+         * Display style of AM/PM next to clock in status bar
+         * 0: No display (Gingerbread/ICS stock)
+         * 1: Small display (Froyo stock)
+         * 2: Normal display (Eclair stock)
+         * default: 0
+         * 
+         * @hide
+         */
+        public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
