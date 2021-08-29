@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.os.Looper;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.telephony.CellSignalStrength;
@@ -94,6 +95,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final String[] mMobileStatusHistory = new String[STATUS_HISTORY_SIZE];
     // Where to copy the next state into.
     private int mMobileStatusHistoryIndex;
+
+    // Volte Icon Style
+    private int mVolteIconStyle = 1;
+    // VoWiFi Icon
+    private int mVoWifiIconStyle = 1;
 
     private boolean mIsVowifiAvailable;
 
@@ -212,6 +218,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON), false,
                     this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.VOLTE_ICON_STYLE), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.VOWIFI_ICON_STYLE), false,
+                    this, UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -226,6 +238,13 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+        mVolteIconStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.VOLTE_ICON_STYLE, 1,
+                UserHandle.USER_CURRENT);
+
+        mVoWifiIconStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.VOWIFI_ICON_STYLE, 1,
+                UserHandle.USER_CURRENT);
         mConfig = Config.readConfig(mContext);
         setConfiguration(mConfig);
         notifyListeners();
